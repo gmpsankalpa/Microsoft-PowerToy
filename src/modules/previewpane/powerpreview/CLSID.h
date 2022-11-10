@@ -1,5 +1,7 @@
 #pragma once
 #include <guiddef.h>
+#include <vector>
+#include <utility>
 
 // 74619BDA-A66B-451D-864C-A7726F5FE650
 // CLSID used in manifest file for Preview Handler.

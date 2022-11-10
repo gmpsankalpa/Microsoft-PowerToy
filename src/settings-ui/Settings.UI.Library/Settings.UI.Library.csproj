@@ -10,6 +10,8 @@
         <Description>PowerToys Settings UI Library</Description>
         <AssemblyName>PowerToys.Settings.UI.Lib</AssemblyName>
 	    <UseWindowsForms>false</UseWindowsForms>
+      <SelfContained>true</SelfContained>
+      <RuntimeIdentifiers>win10-x64;win10-arm64</RuntimeIdentifiers>
     </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
