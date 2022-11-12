@@ -12,6 +12,7 @@
     <AssemblyName>PowerToys.FileLocksmithUI</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RuntimeIdentifiers>win10-x64;win10-arm64</RuntimeIdentifiers>
+    <SelfContained>true</SelfContained>
     <UseWinUI>true</UseWinUI>
     <GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

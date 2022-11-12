@@ -9,7 +9,7 @@
     <GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
     <UseWPF>true</UseWPF>
 	<SelfContained>true</SelfContained>
-	<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+	<RuntimeIdentifiers>win10-x64;win10-arm64</RuntimeIdentifiers>
   </PropertyGroup>
   
   <PropertyGroup>
