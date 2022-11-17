@@ -1633,8 +1633,7 @@ From there, simply click on one of the supported files in the File Explorer and 
     <comment>Do not localize this string</comment>
   </data>
   <data name="Oobe_Overview.Title" xml:space="preserve">
-    <value>
-		Welcome!</value>
+    <value>Welcome</value>
   </data>
   <data name="Oobe_WhatsNew.Text" xml:space="preserve">
     <value>What's new</value>
