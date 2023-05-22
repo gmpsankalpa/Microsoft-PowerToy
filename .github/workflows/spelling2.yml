@@ -86,6 +86,7 @@ jobs:
           cspell:fullstack/fullstack.txt
           cspell:html/html.txt
           cspell:css/css.txt
+          cspell:win32/win32.txt
 
   comment-push:
     name: Report (Push)
