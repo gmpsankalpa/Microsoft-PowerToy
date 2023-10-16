@@ -961,7 +961,7 @@ struct GdiCrosshairs : GdiSonar<GdiCrosshairs>
 {
     void InvalidateSonar()
     {
-        RECT rc;
+        RECT rc = {};
         auto radius = CurrentSonarRadius();
         GetClientRect(m_hwnd, &rc);
         rc.left = m_sonarPos.x - radius;

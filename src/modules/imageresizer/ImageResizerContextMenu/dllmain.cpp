@@ -254,11 +254,13 @@ private:
             // Iterate over the list of files
             for (DWORD i = 0; i < fileCount; i++)
             {
-                IShellItem* shellItem;
+                IShellItem* shellItem = nullptr;
                 psiItemArray->GetItemAt(i, &shellItem);
-                LPWSTR itemName;
+
+                LPWSTR itemName = {};
                 // Retrieves the entire file system path of the file from its shell item
                 shellItem->GetDisplayName(SIGDN_FILESYSPATH, &itemName);
+
                 CString fileName(itemName);
                 fileName.Append(_T("\r\n"));
                 // Write the file path into the input stream for image resizer
