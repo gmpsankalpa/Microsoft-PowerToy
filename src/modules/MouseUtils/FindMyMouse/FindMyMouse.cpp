@@ -283,7 +283,7 @@ void SuperSonar<D>::OnSonarDestroy()
 template<typename D>
 void SuperSonar<D>::OnSonarInput(WPARAM flags, HRAWINPUT hInput)
 {
-    RAWINPUT input;
+    RAWINPUT input{};
     UINT size = sizeof(input);
     auto result = GetRawInputData(hInput, RID_INPUT, &input, &size, sizeof(RAWINPUTHEADER));
     if (result < sizeof(RAWINPUTHEADER))
@@ -676,13 +676,13 @@ private:
             DQTYPE_THREAD_CURRENT,
             DQTAT_COM_ASTA,
         };
-        ABI::IDispatcherQueueController* controller;
+        ABI::IDispatcherQueueController* controller = nullptr;
         winrt::check_hresult(CreateDispatcherQueueController(options, &controller));
         *winrt::put_abi(m_dispatcherQueueController) = controller;
 
         // Create the compositor for our window.
         m_compositor = winrt::Compositor();
-        ABI::IDesktopWindowTarget* target;
+        ABI::IDesktopWindowTarget* target = nullptr;
         winrt::check_hresult(m_compositor.as<ABI::ICompositorDesktopInterop>()->CreateDesktopWindowTarget(m_hwnd, false, &target));
         *winrt::put_abi(m_target) = target;
 
@@ -731,7 +731,7 @@ private:
         // At maximum opacity, it is m_sonarRadius.
         auto radiusExpression = m_compositor.CreateExpressionAnimation();
         radiusExpression.SetReferenceParameter(L"Root", m_root);
-        wchar_t expressionText[256];
+        wchar_t expressionText[256]{};
         winrt::check_hresult(StringCchPrintfW(expressionText, ARRAYSIZE(expressionText), L"Lerp(Vector2(%d, %d), Vector2(%d, %d), Root.Opacity * %d / %d)", m_sonarRadius * m_sonarZoomFactor, m_sonarRadius * m_sonarZoomFactor, m_sonarRadius, m_sonarRadius, FinalAlphaDenominator, m_finalAlphaNumerator));
         radiusExpression.Expression(expressionText);
         m_circleGeometry.StartAnimation(L"Radius", radiusExpression);
@@ -807,7 +807,7 @@ public:
                     // Update animation
                     auto radiusExpression = m_compositor.CreateExpressionAnimation();
                     radiusExpression.SetReferenceParameter(L"Root", m_root);
-                    wchar_t expressionText[256];
+                    wchar_t expressionText[256]{};
                     winrt::check_hresult(StringCchPrintfW(expressionText, ARRAYSIZE(expressionText), L"Lerp(Vector2(%d, %d), Vector2(%d, %d), Root.Opacity * %d / %d)", m_sonarRadius * m_sonarZoomFactor, m_sonarRadius * m_sonarZoomFactor, m_sonarRadius, m_sonarRadius, FinalAlphaDenominator, m_finalAlphaNumerator));
                     radiusExpression.Expression(expressionText);
                     m_circleGeometry.StartAnimation(L"Radius", radiusExpression);
@@ -929,7 +929,7 @@ struct GdiSpotlight : GdiSonar<GdiSpotlight>
 {
     void InvalidateSonar()
     {
-        RECT rc;
+        RECT rc{};
         auto radius = CurrentSonarRadius();
         rc.left = this->m_sonarPos.x - radius;
         rc.top = this->m_sonarPos.y - radius;
@@ -980,7 +980,7 @@ struct GdiCrosshairs : GdiSonar<GdiCrosshairs>
         BeginPaint(this->m_hwnd, &ps);
 
         auto radius = CurrentSonarRadius();
-        RECT rc;
+        RECT rc{};
 
         HBRUSH white = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
 
