@@ -144,6 +144,7 @@ public:
     void ToggleEditor() noexcept;
 
     LRESULT WndProc(HWND, UINT, WPARAM, LPARAM) noexcept;
+    void OnKeyboardInput(WPARAM flags, HRAWINPUT hInput) noexcept;
     void OnDisplayChange(DisplayChangeType changeType) noexcept;
     bool AddWorkArea(HMONITOR monitor, const FancyZonesDataTypes::WorkAreaId& id) noexcept;
 
@@ -586,6 +587,12 @@ LRESULT FancyZones::WndProc(HWND window, UINT message, WPARAM wparam, LPARAM lpa
     }
     break;
 
+    case WM_INPUT:
+    {
+        OnKeyboardInput(wparam, reinterpret_cast<HRAWINPUT>(lparam));
+    }
+    break;
+
     case WM_SETTINGCHANGE:
     {
         if (wparam == SPI_SETWORKAREA)
@@ -721,6 +728,29 @@ LRESULT FancyZones::WndProc(HWND window, UINT message, WPARAM wparam, LPARAM lpa
     break;
     }
     return 0;
+}
+
+void FancyZones::OnKeyboardInput(WPARAM /*flags*/, HRAWINPUT hInput) noexcept
+{
+    auto input = KeyboardInput::OnKeyboardInput(hInput);
+    if (!input.has_value())
+    {
+        return;
+    }
+
+    switch (input.value().vkKey)
+    {
+    case VK_SHIFT:
+        {
+        }
+        break;
+    case VK_CONTROL:
+        {
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 void FancyZones::OnDisplayChange(DisplayChangeType changeType) noexcept
