@@ -172,7 +172,6 @@ private:
     const HINSTANCE m_hinstance{};
 
     HWND m_window{};
-    KeyboardInput m_keyboardInput{};
     std::unique_ptr<WindowMouseSnap> m_windowMouseSnapper{};
     WindowKeyboardSnap m_windowKeyboardSnapper{};
     WorkAreaConfiguration m_workAreaConfiguration;
@@ -225,7 +224,7 @@ FancyZones::Run() noexcept
         return;
     }
 
-    if (!m_keyboardInput.Initialize(m_window))
+    if (!KeyboardInput::Initialize(m_window))
     {
         Logger::critical(L"Failed to register raw input device");
         return;
