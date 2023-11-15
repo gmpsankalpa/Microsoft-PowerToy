@@ -156,118 +156,110 @@ HRESULT CContextMenuHandler::QueryContextMenu(_In_ HMENU hmenu, UINT indexMenu, 
     {
         indexMenu++;
     }*/
-
-    
+       
 
     // sub menu
-    int currentMenuPos = 0;
     int iMenuCounter = 0;
 
+    // Add main menu item
     mii.fMask = MIIM_SUBMENU | MIIM_STRING | MIIM_ID;
     mii.wID = idCmdFirst++;
     mii.hSubMenu = hSubMenu;
     mii.dwTypeData = strAddToHopper;
-    if (!InsertMenuItem(hmenu, indexMenu, TRUE, &mii))
+    if (!InsertMenuItem(hmenu, indexMenu++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
     iMenuCounter++;
 
+    // 'Add' submenu
+    int SubMenuIndex = 0; // Separate index for 'Add' submenu
+
     mii.fMask = MIIM_STRING | MIIM_ID;
+    mii.wID = idCmdFirst++;
     mii.dwTypeData = strViewHopper;
-    if (!InsertMenuItem(hSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hSubMenu, SubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
+    iMenuCounter++;
+
+    mii.wID = idCmdFirst++;
     mii.dwTypeData = strClearHopper;
-    if (!InsertMenuItem(hSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hSubMenu, SubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
     iMenuCounter++;
 
     mii.fMask = MIIM_FTYPE | MIIM_ID;
-    mii.wID = idCmdFirst++;
     mii.fType = MFT_SEPARATOR;
-    if (!InsertMenuItem(hSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hSubMenu, SubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
     iMenuCounter++;
+
+    // 'Fetch' submenu
+    int fetchSubMenuIndex = 0; // Separate index for 'Fetch' submenu
 
     mii.fMask = MIIM_SUBMENU | MIIM_STRING | MIIM_ID;
-    mii.wID = idCmdFirst++;
     mii.hSubMenu = hFetchSubMenu;
     mii.dwTypeData = strFetchHopper;
-    if (!InsertMenuItem(hSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hSubMenu, SubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
     iMenuCounter++;
-
-    mii.hSubMenu = hAddSubMenu;
-    mii.dwTypeData = strAddHopper;
-    mii.wID = idCmdFirst++;
-    if (!InsertMenuItem(hSubMenu, currentMenuPos++, TRUE, &mii))
-    {
-        return  HRESULT_FROM_WIN32(GetLastError());
-    }
-    iMenuCounter++;
-    
-    // "Fetch" menu
-    currentMenuPos = 0;
 
     mii.fMask = MIIM_STRING | MIIM_ID;
     mii.wID = idCmdFirst++;
     mii.dwTypeData = strMoveHere;
-    if (!InsertMenuItem(hFetchSubMenu, currentMenuPos++, TRUE, &mii))
-    {
-        return  HRESULT_FROM_WIN32(GetLastError());
-    }
-    iMenuCounter++;
-
-    mii.fMask = MIIM_STRING | MIIM_ID;
-    mii.wID = idCmdFirst++;
-    mii.dwTypeData = strCopyHere;
-    if (!InsertMenuItem(hFetchSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hFetchSubMenu, fetchSubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
     iMenuCounter++;
 
-    // "Add" menu
-    currentMenuPos = 0;
+    mii.wID = idCmdFirst++;
+    mii.dwTypeData = strCopyHere;
+    if (!InsertMenuItem(hFetchSubMenu, fetchSubMenuIndex++, TRUE, &mii))
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+    iMenuCounter++;
+
+    // 'Add' submenu
+    int addSubMenuIndex = 0; // Separate index for 'Add' submenu
+
+    mii.fMask = MIIM_SUBMENU | MIIM_STRING | MIIM_ID;
+    mii.hSubMenu = hAddSubMenu;
+    mii.dwTypeData = strAddHopper;
+    if (!InsertMenuItem(hSubMenu, SubMenuIndex++, TRUE, &mii))
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+    iMenuCounter++;
     mii.fMask = MIIM_STRING | MIIM_ID;
     mii.wID = idCmdFirst++;
     mii.dwTypeData = strAppendToRootHopper;
-    if (!InsertMenuItem(hAddSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hAddSubMenu, addSubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
     iMenuCounter++;
 
-    mii.fMask = MIIM_STRING | MIIM_ID;
     mii.wID = idCmdFirst++;
     mii.dwTypeData = strAppendWithFoldersHopper;
-    if (!InsertMenuItem(hAddSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hAddSubMenu, addSubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
     iMenuCounter++;
 
     mii.fMask = MIIM_FTYPE | MIIM_ID;
-    mii.wID = idCmdFirst++;
     mii.fType = MFT_SEPARATOR;
-    if (!InsertMenuItem(hAddSubMenu, currentMenuPos++, TRUE, &mii))
-    {
-        return HRESULT_FROM_WIN32(GetLastError());
-    }
-    iMenuCounter++;
-        
-    mii.fMask = MIIM_STRING | MIIM_ID;
-    mii.wID = idCmdFirst++;
-    mii.dwTypeData = strReplaceToRootHopper;
-    if (!InsertMenuItem(hAddSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hAddSubMenu, addSubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -275,8 +267,16 @@ HRESULT CContextMenuHandler::QueryContextMenu(_In_ HMENU hmenu, UINT indexMenu, 
 
     mii.fMask = MIIM_STRING | MIIM_ID;
     mii.wID = idCmdFirst++;
+    mii.dwTypeData = strReplaceToRootHopper;
+    if (!InsertMenuItem(hAddSubMenu, addSubMenuIndex++, TRUE, &mii))
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+    iMenuCounter++;
+
+    mii.wID = idCmdFirst++;
     mii.dwTypeData = strReplaceWithFoldersHopper;
-    if (!InsertMenuItem(hAddSubMenu, currentMenuPos++, TRUE, &mii))
+    if (!InsertMenuItem(hAddSubMenu, addSubMenuIndex++, TRUE, &mii))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
