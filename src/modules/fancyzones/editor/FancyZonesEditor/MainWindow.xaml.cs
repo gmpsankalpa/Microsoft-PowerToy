@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -15,6 +14,7 @@ using System.Windows.Interop;
 using Common.UI;
 using FancyZonesEditor.Models;
 using FancyZonesEditor.Utils;
+using FancyZonesEditorCommon.Data;
 using ManagedCommon;
 using ModernWpf.Controls;
 
