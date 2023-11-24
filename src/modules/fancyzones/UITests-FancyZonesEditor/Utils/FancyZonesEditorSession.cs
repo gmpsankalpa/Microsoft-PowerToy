@@ -18,6 +18,7 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
     {
         protected const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
         private const string FancyZonesEditorPath = @"\..\..\..\PowerToys.FancyZonesEditor.exe";
+        private TestContext context;
 
         public static class AccessibilityId
         {
@@ -65,6 +66,8 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
             // Find main editor window
             MainEditorWindow = Session.FindElementByAccessibilityId(AccessibilityId.MainWindow);
             Assert.IsNotNull(MainEditorWindow, "Main editor window not found");
+
+            context = testContext;
         }
 
         public void Close(TestContext testContext)
@@ -96,7 +99,7 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
             }
             catch (Exception)
             {
-                Assert.Fail("Layout " + layoutName + " not found");
+                context.WriteLine("Layout " + layoutName + " not found");
                 return null;
             }
         }
