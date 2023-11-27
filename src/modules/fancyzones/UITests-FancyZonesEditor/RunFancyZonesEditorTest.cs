@@ -15,7 +15,8 @@ namespace Microsoft.FancyZonesEditor.UITests
     public class RunFancyZonesEditorTest
     {
         private static FancyZonesEditorSession? _session;
-        private static IOTestHelper? _ioHelper;
+        private static IOTestHelper? _editorParamsIOHelper;
+        private static IOTestHelper? _appliedLayoutsIOHelper;
         private static TestContext? _context;
 
         [ClassInitialize]
@@ -25,7 +26,7 @@ namespace Microsoft.FancyZonesEditor.UITests
 
             // prepare test editor parameters with 2 monitors before launhing the editor
             EditorParameters editorParameters = new EditorParameters();
-            _ioHelper = new IOTestHelper(editorParameters.File);
+            _editorParamsIOHelper = new IOTestHelper(editorParameters.File);
             ParamsWrapper parameters = new ParamsWrapper
             {
                 ProcessId = 1,
@@ -66,14 +67,16 @@ namespace Microsoft.FancyZonesEditor.UITests
                     },
                 },
             };
-            _ioHelper.WriteData(editorParameters.Serialize(parameters));
+            _editorParamsIOHelper.WriteData(editorParameters.Serialize(parameters));
+
+            _appliedLayoutsIOHelper = new IOTestHelper(new AppliedLayouts().File);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            _ioHelper?.RestoreData();
-            _ioHelper = null;
+            _editorParamsIOHelper?.RestoreData();
+            _appliedLayoutsIOHelper?.RestoreData();
 
             _context = null;
         }
