@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,7 +18,8 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
     public class FancyZonesEditorSession
     {
         protected const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
-        private const string FancyZonesEditorPath = @"\..\..\..\PowerToys.FancyZonesEditor.exe";
+        private const string FancyZonesEditorName = "PowerToys.FancyZonesEditor";
+        private const string FancyZonesEditorPath = @"\..\..\..\" + FancyZonesEditorName + ".exe";
         private TestContext context;
 
         public static class AccessibilityId
@@ -49,8 +51,6 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
 
         public WindowsDriver<WindowsElement>? Session { get; }
 
-        public WindowsElement? MainEditorWindow { get; }
-
         public FancyZonesEditorSession(TestContext testContext)
         {
             try
@@ -73,26 +73,45 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
             // Set implicit timeout to 1.5 seconds to make element search to retry every 500 ms for at most three times
             Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);
 
-            // Find main editor window
-            MainEditorWindow = Session.FindElementByAccessibilityId(AccessibilityId.MainWindow);
-            Assert.IsNotNull(MainEditorWindow, "Main editor window not found");
-
             context = testContext;
         }
 
-        public void Close(TestContext testContext)
+        public void Close()
         {
             // Close the session
             if (Session != null)
             {
                 try
                 {
+                    // in case if something went wrong and an error message is shown
+                    var dialog = Session.FindElementByName("Editor data parsing error.");
+                    Session.CloseApp(); // will close the dialog
+
+                    // session can't access new Editor instance created after closing the dialog
+                    // kill the process
+                    IntPtr appTopLevelWindowHandle = IntPtr.Zero;
+                    foreach (Process clsProcess in Process.GetProcesses())
+                    {
+                        if (clsProcess.ProcessName.Equals(FancyZonesEditorName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            clsProcess.Kill();
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                try
+                {
                     // FZEditor application can be closed by explicitly closing main editor window
-                    MainEditorWindow?.SendKeys(Keys.Alt + Keys.F4);
+                    var mainEditorWindow = Session.FindElementByAccessibilityId(AccessibilityId.MainWindow);
+                    mainEditorWindow?.SendKeys(Keys.Alt + Keys.F4);
                 }
                 catch (Exception ex)
                 {
-                    testContext.WriteLine(ex.Message);
+                    context.WriteLine("Unable to close main window. ", ex.Message);
                 }
 
                 Session.Quit();
