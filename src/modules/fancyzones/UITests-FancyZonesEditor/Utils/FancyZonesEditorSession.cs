@@ -47,6 +47,7 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
             public const string KeySelectionComboBox = "quickKeySelectionComboBox";
             public const string EditZonesButton = "editZoneLayoutButton";
             public const string DeleteTextButton = "DeleteButton";
+            public const string HotkeyComboBox = "quickKeySelectionComboBox";
         }
 
         public WindowsDriver<WindowsElement>? Session { get; }
@@ -192,6 +193,24 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
             catch
             {
                 Assert.Fail($"Name TextBox not found");
+                return null;
+            }
+        }
+
+        public WindowsElement? GetHotkeyComboBox()
+        {
+            return FindByAccessibilityId(AccessibilityId.HotkeyComboBox);
+        }
+
+        public WindowsElement? GetHotkeyPopup()
+        {
+            try
+            {
+                return Session?.FindElementByClassName("Popup");
+            }
+            catch
+            {
+                Assert.Fail($"Hotkey popup window not found");
                 return null;
             }
         }
