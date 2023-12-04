@@ -80,6 +80,63 @@ namespace Peek.UI
             }
         }
 
+        /// <summary>
+        /// Preview files passed through command line.
+        /// </summary>
+        public void PreviewCommandLine(bool firstActivation)
+        {
+            if (firstActivation)
+            {
+                Activate();
+            }
+
+            // Hide if there is no file to preview
+            if (firstActivation && ViewModel.CurrentItem == null)
+            {
+                Uninitialize();
+            }
+
+            Initialize();
+        }
+
+        public void ToggleMessage(bool firstActivation, string path)
+        {
+            if (firstActivation)
+            {
+                Activate();
+                Initialize(path);
+                return;
+            }
+
+            if (AppWindow.IsVisible)
+            {
+                Uninitialize();
+            }
+            else
+            {
+                Initialize(path);
+            }
+        }
+
+        public void PreviewMessage(bool firstActivation, string path)
+        {
+            if (firstActivation)
+            {
+                Activate();
+                this.Hide();
+                return;
+            }
+
+            if (AppWindow.IsVisible)
+            {
+                // TODO new item
+                if (!string.Equals(path, ViewModel.CurrentItem?.Path, StringComparison.OrdinalIgnoreCase))
+                {
+                    Initialize(path);
+                }
+            }
+        }
+
         private void HandleThemeChange()
         {
             AppWindow appWindow = this.AppWindow;
@@ -134,6 +191,18 @@ namespace Peek.UI
             PowerToysTelemetry.Log.WriteEvent(new OpenedEvent() { FileExtension = ViewModel.CurrentItem?.Extension ?? string.Empty, HotKeyToVisibleTimeMs = bootTime.ElapsedMilliseconds });
         }
 
+        private void Initialize()
+        {
+            ViewModel.Initialize();
+            ViewModel.ScalingFactor = this.GetMonitorScale();
+        }
+
+        private void Initialize(string path)
+        {
+            ViewModel.Initialize(path);
+            ViewModel.ScalingFactor = this.GetMonitorScale();
+        }
+
         private void Uninitialize()
         {
             this.Restore();
@@ -174,8 +243,26 @@ namespace Peek.UI
                 this.CenterOnMonitor(foregroundWindowHandle, desiredWindowWidth, desiredWindowHeight);
             }
 
-            this.Show();
-            WindowHelpers.BringToForeground(this.GetWindowHandle());
+            // this.Show();
+            // WindowHelpers.BringToForeground(this.GetWindowHandle());
+            var fgHwnd = Windows.Win32.PInvoke.GetForegroundWindow();
+            Windows.Win32.PInvoke.SetWindowPos(
+                new Windows.Win32.Foundation.HWND(this.GetWindowHandle()),
+                new Windows.Win32.Foundation.HWND(-1),
+                0,
+                0,
+                0,
+                0,
+                Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_NOMOVE | Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_NOSIZE | Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE | Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_SHOWWINDOW | Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_ASYNCWINDOWPOS);
+
+            Windows.Win32.PInvoke.SetWindowPos(
+                new Windows.Win32.Foundation.HWND(this.GetWindowHandle()),
+                new Windows.Win32.Foundation.HWND(-2),
+                0,
+                0,
+                0,
+                0,
+                Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_NOMOVE | Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_NOSIZE | Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE | Windows.Win32.UI.WindowsAndMessaging.SET_WINDOW_POS_FLAGS.SWP_ASYNCWINDOWPOS);
         }
 
         private Size GetMonitorMaxContentSize(Size monitorSize, double scaling)

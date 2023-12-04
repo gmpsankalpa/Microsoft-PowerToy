@@ -2,9 +2,7 @@
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Runtime.InteropServices;
-using ManagedCommon;
 using Microsoft.UI.Xaml;
 using Windows.Win32;
 using Windows.Win32.Foundation;
@@ -38,7 +36,7 @@ namespace Peek.UI.Extensions
             var cy = (info.rcMonitor.bottom + info.rcMonitor.top) / 2;
             var left = cx - (w / 2);
             var top = cy - (h / 2);
-            SetWindowPosOrThrow(new HWND(hwndToCenter), default(HWND), left, top, w, h, SET_WINDOW_POS_FLAGS.SWP_SHOWWINDOW);
+            SetWindowPosOrThrow(new HWND(hwndToCenter), default(HWND), left, top, w, h, SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
         }
 
         private static void SetWindowPosOrThrow(HWND hWnd, HWND hWndInsertAfter, int x, int y, int cx, int cy, SET_WINDOW_POS_FLAGS uFlags)

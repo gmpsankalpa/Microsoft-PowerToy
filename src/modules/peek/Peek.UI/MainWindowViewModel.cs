@@ -3,12 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using ManagedCommon;
 using Microsoft.UI.Xaml;
 using Peek.Common.Helpers;
 using Peek.Common.Models;
-using Peek.UI.Models;
 using Windows.Win32.Foundation;
 
 namespace Peek.UI
@@ -24,7 +25,7 @@ namespace Peek.UI
         private IFileSystemItem? _currentItem;
 
         [ObservableProperty]
-        private NeighboringItems? _items;
+        private IReadOnlyList<IFileSystemItem>? _items;
 
         [ObservableProperty]
         private double _scalingFactor = 1.0;
@@ -45,11 +46,49 @@ namespace Peek.UI
         {
             try
             {
-                Items = NeighboringItemsQuery.GetNeighboringItems(foregroundWindowHandle);
+                Items = NeighboringItemsQuery.GetNeighboringItemsFromShell(foregroundWindowHandle);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Failed to get File Explorer Items: " + ex.Message);
+                Logger.LogError("Failed to get File Explorer Items", ex);
+            }
+
+            CurrentIndex = 0;
+
+            if (Items != null && Items.Count > 0)
+            {
+                CurrentItem = Items[0];
+            }
+        }
+
+        public void Initialize()
+        {
+            try
+            {
+                Items = NeighboringItemsQuery.GetNeighboringItemsFromCommandLine();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to get Command Line Items", ex);
+            }
+
+            CurrentIndex = 0;
+
+            if (Items != null && Items.Count > 0)
+            {
+                CurrentItem = Items[0];
+            }
+        }
+
+        public void Initialize(string path)
+        {
+            try
+            {
+                Items = NeighboringItemsQuery.GetNeighboringItems(path);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to get Command Line Items", ex);
             }
 
             CurrentIndex = 0;

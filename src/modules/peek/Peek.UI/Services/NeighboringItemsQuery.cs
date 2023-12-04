@@ -13,7 +13,7 @@ namespace Peek.UI
         [ObservableProperty]
         private bool isMultipleFilesActivation;
 
-        public NeighboringItems? GetNeighboringItems(Windows.Win32.Foundation.HWND foregroundWindowHandle)
+        public ShellNeighboringItems? GetNeighboringItemsFromShell(Windows.Win32.Foundation.HWND foregroundWindowHandle)
         {
             var selectedItemsShellArray = FileExplorerHelper.GetSelectedItems(foregroundWindowHandle);
             var selectedItemsCount = selectedItemsShellArray?.GetCount() ?? 0;
@@ -32,7 +32,23 @@ namespace Peek.UI
                 return null;
             }
 
-            return new NeighboringItems(neighboringItemsShellArray);
+            return new ShellNeighboringItems(neighboringItemsShellArray);
+        }
+
+        public CommandLineNeighboringItems GetNeighboringItemsFromCommandLine()
+        {
+            var items = CommandLineHelper.GetItemsFromCommandLine();
+            var neighboringItems = new CommandLineNeighboringItems(items);
+            IsMultipleFilesActivation = neighboringItems.Count > 1;
+            return neighboringItems;
+        }
+
+        public CommandLineNeighboringItems GetNeighboringItems(string path)
+        {
+            var items = CommandLineHelper.GetItems(path);
+            var neighboringItems = new CommandLineNeighboringItems(items);
+            IsMultipleFilesActivation = neighboringItems.Count > 1;
+            return neighboringItems;
         }
     }
 }

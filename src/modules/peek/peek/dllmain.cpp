@@ -275,8 +275,9 @@ private:
 
         unsigned long powertoys_pid = GetCurrentProcessId();
 
-        std::wstring executable_args = L"";
-        executable_args.append(std::to_wstring(powertoys_pid));
+        std::wstring params = L"-powerToysPid ";
+        params.append(std::to_wstring(powertoys_pid));
+        params.append(L" --started-from-runner");
 
         if (m_alwaysRunNotElevated && is_process_elevated(false))
         {
@@ -284,7 +285,7 @@ private:
             const auto modulePath = get_module_folderpath();
             std::wstring runExecutablePath = modulePath;
             runExecutablePath += L"\\WinUI3Apps\\PowerToys.Peek.UI.exe";
-            std::optional<ProcessInfo> processStartedInfo = RunNonElevatedFailsafe(runExecutablePath, executable_args, modulePath, PROCESS_QUERY_INFORMATION | SYNCHRONIZE | PROCESS_TERMINATE);
+            std::optional<ProcessInfo> processStartedInfo = RunNonElevatedFailsafe(runExecutablePath, params, modulePath, PROCESS_QUERY_INFORMATION | SYNCHRONIZE | PROCESS_TERMINATE);
             if (processStartedInfo.has_value())
             {
                 m_processPid = processStartedInfo.value().processID;
@@ -303,7 +304,7 @@ private:
             sei.lpVerb = L"open";
             sei.lpFile = L"WinUI3Apps\\PowerToys.Peek.UI.exe";
             sei.nShow = SW_SHOWNORMAL;
-            sei.lpParameters = executable_args.data();
+            sei.lpParameters = params.data();
 
             if (ShellExecuteExW(&sei))
             {

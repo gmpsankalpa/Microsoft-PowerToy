@@ -11,6 +11,8 @@ namespace Peek.UI.Native
 {
     public static class NativeMethods
     {
+        internal const uint SHGFI_DISPLAYNAME = 0x000000200;
+
         [Flags]
         public enum AssocF
         {
@@ -50,5 +52,8 @@ namespace Peek.UI.Native
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         internal static extern int GetClassName(IntPtr hWnd, StringBuilder buf, int nMaxCount);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
     }
 }

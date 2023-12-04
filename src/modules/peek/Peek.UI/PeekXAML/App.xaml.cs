@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Linq;
 using interop;
 using ManagedCommon;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,9 +11,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.PowerToys.Telemetry;
 using Microsoft.UI.Xaml;
 using Peek.Common;
+using Peek.Common.Helpers;
 using Peek.FilePreviewer;
 using Peek.FilePreviewer.Models;
 using Peek.UI.Native;
+using Peek.UI.Services;
 using Peek.UI.Telemetry.Events;
 using Peek.UI.Views;
 
@@ -40,7 +43,6 @@ namespace Peek.UI
         public App()
         {
             InitializeComponent();
-            Logger.InitializeLogger("\\Peek\\Logs");
 
             Host = Microsoft.Extensions.Hosting.Host.
             CreateDefaultBuilder().
@@ -51,6 +53,7 @@ namespace Peek.UI
                 services.AddTransient<NeighboringItemsQuery>();
                 services.AddSingleton<IUserSettings, UserSettings>();
                 services.AddSingleton<IPreviewSettings, PreviewSettings>();
+                services.AddSingleton<NamedPipeServer>();
 
                 // Views and ViewModels
                 services.AddTransient<TitleBar>();
@@ -73,32 +76,51 @@ namespace Peek.UI
             return service;
         }
 
+        public void PreviewCommandLine()
+        {
+            var firstActivation = EnsureWindowInitialized();
+            Window!.PreviewCommandLine(firstActivation);
+        }
+
+        public void OnPreviewMessage(string path)
+        {
+            var firstActivation = EnsureWindowInitialized();
+            Window!.PreviewMessage(firstActivation, path);
+        }
+
+        public void OnToggleMessage(string path)
+        {
+            var firstActivation = EnsureWindowInitialized();
+            Window!.ToggleMessage(firstActivation, path);
+        }
+
         /// <summary>
         /// Invoked when the application is launched.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            if (PowerToys.GPOWrapper.GPOWrapper.GetConfiguredPeekEnabledValue() == PowerToys.GPOWrapper.GpoRuleConfigured.Disabled)
+            int powerToysRunnerPid = GetPowerToysPid();
+            if (powerToysRunnerPid != 0 && Environment.GetCommandLineArgs().Contains("--started-from-runner"))
             {
-                Logger.LogWarning("Tried to start with a GPO policy setting the utility to always be disabled. Please contact your systems administrator.");
-                Environment.Exit(0); // Current.Exit won't work until there's a window opened.
-                return;
-            }
-
-            var cmdArgs = Environment.GetCommandLineArgs();
-            if (cmdArgs?.Length > 1)
-            {
-                if (int.TryParse(cmdArgs[cmdArgs.Length - 1], out int powerToysRunnerPid))
+                RunnerHelper.WaitForPowerToysRunner(powerToysRunnerPid, () =>
                 {
-                    RunnerHelper.WaitForPowerToysRunner(powerToysRunnerPid, () =>
-                    {
-                        Environment.Exit(0);
-                    });
-                }
-            }
+                    Environment.Exit(0);
+                });
 
-            NativeEventWaiter.WaitForEventLoop(Constants.ShowPeekEvent(), OnPeekHotkey);
+                NativeEventWaiter.WaitForEventLoop(Constants.ShowPeekEvent(), OnPeekHotkey);
+                GetService<NamedPipeServer>(); // Start the named pipe server
+            }
+            else
+            {
+                System.Windows.MessageBox.Show(
+                    ResourceLoaderInstance.ResourceLoader.GetString("Startup_Detached_Error"),
+                    ResourceLoaderInstance.ResourceLoader.GetString("AppTitle\\Title"),
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+
+                Environment.Exit(0);
+            }
         }
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -124,6 +146,43 @@ namespace Peek.UI
             }
 
             Window.Toggle(firstActivation, foregroundWindowHandle);
+        }
+
+        /// <summary>
+        /// Enture the main window is initialized
+        /// </summary>
+        /// <returns>Wether the window has been initialized for the first time</returns>
+        private bool EnsureWindowInitialized()
+        {
+            if (Window == null)
+            {
+                Window = new MainWindow();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static int GetPowerToysPid()
+        {
+            var args = Environment.GetCommandLineArgs();
+            for (int i = 0; i + 1 < args.Length; i++)
+            {
+                if (args[i] == "-powerToysPid")
+                {
+                    int powerToysPid;
+                    if (int.TryParse(args[i + 1], out powerToysPid))
+                    {
+                        return powerToysPid;
+                    }
+
+                    break;
+                }
+            }
+
+            return 0;
         }
     }
 }

@@ -17,9 +17,9 @@ namespace Peek.UI.Models
 
         private int CurrentIndex { get; set; }
 
-        private NeighboringItems Items { get; }
+        private IReadOnlyList<IFileSystemItem> Items { get; }
 
-        public NeighboringItemsEnumerator(NeighboringItems items)
+        public NeighboringItemsEnumerator(IReadOnlyList<IFileSystemItem> items)
         {
             CurrentIndex = -1;
             Items = items;
