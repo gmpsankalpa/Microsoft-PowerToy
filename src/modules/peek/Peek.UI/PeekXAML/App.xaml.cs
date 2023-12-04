@@ -149,9 +149,9 @@ namespace Peek.UI
         }
 
         /// <summary>
-        /// Enture the main window is initialized
+        /// Ensure the main window is initialized
         /// </summary>
-        /// <returns>Wether the window has been initialized for the first time</returns>
+        /// <returns>Whether the window has been initialized for the first time</returns>
         private bool EnsureWindowInitialized()
         {
             if (Window == null)
