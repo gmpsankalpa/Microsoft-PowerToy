@@ -15,6 +15,8 @@ namespace Peek.UI.Helpers
 
         public string[] Args { get; set; }
 
+        public bool Toggle { get; set; }
+
         public CommandLine()
         {
             Args = Array.Empty<string>();

@@ -29,6 +29,7 @@ namespace Peek.UI.Helpers
             {
                 CurrentDirectory = Environment.CurrentDirectory,
                 Args = args, // Skip the first argument, which is the executable path
+                Toggle = args.Contains("--toggle"), // TODO fix
             };
 
             new SettingsUtils().SaveSettings(commandLine.ToJsonString(), PeekSettings.ModuleName, FileName);

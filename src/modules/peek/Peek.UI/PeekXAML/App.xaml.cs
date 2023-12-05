@@ -8,12 +8,14 @@ using interop;
 using ManagedCommon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.PowerToys.Settings.UI.Library;
 using Microsoft.PowerToys.Telemetry;
 using Microsoft.UI.Xaml;
 using Peek.Common;
 using Peek.Common.Helpers;
 using Peek.FilePreviewer;
 using Peek.FilePreviewer.Models;
+using Peek.UI.Helpers;
 using Peek.UI.Native;
 using Peek.UI.Services;
 using Peek.UI.Telemetry.Events;
@@ -78,8 +80,9 @@ namespace Peek.UI
 
         public void PreviewCommandLine()
         {
+            var commandLine = new SettingsUtils().GetSettingsOrDefault<CommandLine>(PeekSettings.ModuleName, "last-command-line.json"); // TODO fix
             var firstActivation = EnsureWindowInitialized();
-            Window!.PreviewCommandLine(firstActivation);
+            Window!.PreviewCommandLine(firstActivation, commandLine.Toggle);
         }
 
         public void OnPreviewMessage(string path)

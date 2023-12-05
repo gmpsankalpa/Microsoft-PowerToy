@@ -83,20 +83,30 @@ namespace Peek.UI
         /// <summary>
         /// Preview files passed through command line.
         /// </summary>
-        public void PreviewCommandLine(bool firstActivation)
+        public void PreviewCommandLine(bool firstActivation, bool toggle)
         {
             if (firstActivation)
             {
                 Activate();
+                this.Hide();
             }
 
-            // Hide if there is no file to preview
-            if (firstActivation && ViewModel.CurrentItem == null)
+            if (toggle)
             {
-                Uninitialize();
+                if (AppWindow.IsVisible)
+                {
+                    Uninitialize();
+                }
+                else
+                {
+                    Initialize();
+                }
             }
-
-            Initialize();
+            else if (AppWindow.IsVisible)
+            {
+                // TODO need to check if item is changed
+                Initialize();
+            }
         }
 
         public void ToggleMessage(bool firstActivation, string path)
