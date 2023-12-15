@@ -24,7 +24,7 @@ namespace Microsoft.FancyZonesEditor.UITests
         {
             _context = testContext;
 
-            // prepare test editor parameters with 2 monitors before launhing the editor
+            // prepare test editor parameters with 2 monitors before launching the editor
             EditorParameters editorParameters = new EditorParameters();
             _editorParamsIOHelper = new IOTestHelper(editorParameters.File);
             ParamsWrapper parameters = new ParamsWrapper
