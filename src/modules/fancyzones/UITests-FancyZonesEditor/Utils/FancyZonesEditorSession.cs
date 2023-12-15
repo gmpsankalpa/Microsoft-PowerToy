@@ -36,6 +36,10 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
             public const string SensitivitySlider = "SensitivityInput";
             public const string SpacingSlider = "Spacing";
             public const string SpacingToggle = "spaceAroundSetting";
+            public const string HorizontalDefaultButtonUnchecked = "SetLayoutAsHorizontalDefaultButton";
+            public const string VerticalDefaultButtonUnchecked = "SetLayoutAsVerticalDefaultButton";
+            public const string HorizontalDefaultButtonChecked = "HorizontalDefaultLayoutButton";
+            public const string VerticalDefaultButtonChecked = "VerticalDefaultLayoutButton";
 
             // edit template layout window
             public const string CopyTemplate = "createFromTemplateLayoutButton";
@@ -215,6 +219,30 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
             }
         }
 
+        public WindowsElement? GetHorizontalDefaultButton(bool isChecked)
+        {
+            if (isChecked)
+            {
+                return FindByAccessibilityId(AccessibilityId.HorizontalDefaultButtonChecked);
+            }
+            else
+            {
+                return FindByAccessibilityId(AccessibilityId.HorizontalDefaultButtonUnchecked);
+            }
+        }
+
+        public WindowsElement? GetVerticalDefaultButton(bool isChecked)
+        {
+            if (isChecked)
+            {
+                return FindByAccessibilityId(AccessibilityId.VerticalDefaultButtonChecked);
+            }
+            else
+            {
+                return FindByAccessibilityId(AccessibilityId.VerticalDefaultButtonUnchecked);
+            }
+        }
+
         public void Click_CreateNewLayout()
         {
             var button = FindByAccessibilityId(AccessibilityId.NewLayoutButton);
@@ -290,9 +318,9 @@ namespace Microsoft.FancyZonesEditor.UnitTests.Utils
                 {
                     var element = Session?.FindElementByName(name);
                     if (element != null)
-                {
-                    return element.Displayed;
-                }
+                    {
+                        return element.Displayed;
+                    }
 
                     return false;
                 });
