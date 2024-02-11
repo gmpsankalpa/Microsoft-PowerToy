@@ -9,15 +9,16 @@
         // `theme` can be "light" or "dark"
         // `lang` is the language of the file
         // `wrap` if the editor is wrapping or not
-        
+
         var theme = ("[[PT_THEME]]" == "dark") ? "vs-dark" : "vs";
         var lang = "[[PT_LANG]]";
         var wrap = ([[PT_WRAP]] == 1) ? true : false;
+        var fontSize = [[PT_FONT_SIZE]];
 
         var base64code = "[[PT_CODE]]";
-        
+
         // Code taken from https://stackoverflow.com/a/30106551/14774889
-        var code = decodeURIComponent(atob(base64code).split('').map(function(c) {
+        var code = decodeURIComponent(atob(base64code).split('').map(function (c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     </script>
@@ -29,21 +30,25 @@
     <title>Previewer for developer Files</title>
     <style>
         /* Fits content to window size */
-        html, body{
-            padding:0;
+        html,
+        body {
+            padding: 0;
         }
-        #container,.monaco-editor {
-            position:fixed;
-            height:100%;
-            left:0;
-            top:0;
-            right:0;
-            bottom:0;
+
+        #container,
+        .monaco-editor {
+            position: fixed;
+            height: 100%;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
         }
-        .overflowingContentWidgets{
+
+        .overflowingContentWidgets {
             /*Hides alert box */
-            display:none!important
-        } 
+            display: none !important
+        }
     </style>
 </head>
 
@@ -53,7 +58,7 @@
     <!-- Script -->
     <script src="http://[[PT_URL]]/monacoSRC/min/vs/loader.js"></script>
     <script src="http://[[PT_URL]]/monacoSpecialLanguages.js" type="module"></script>
-<script type="module">
+    <script type="module">
         var editor;
         import { registerAdditionalLanguages } from "http://[[PT_URL]]/monacoSpecialLanguages.js"
         require.config({ paths: { vs: 'http://[[PT_URL]]/monacoSRC/min/vs' } });
@@ -66,7 +71,7 @@
                 language: lang, // Sets language fof the code
                 readOnly: true, // Sets to readonly
                 theme: theme, // Sets editor theme
-                minimap: {enabled: false}, // Disables minimap
+                minimap: { enabled: false }, // Disables minimap
                 lineNumbersMinChars: "3", //Width of the line numbers
                 scrollbar: {
                     // Deactivate shadows
@@ -77,9 +82,9 @@
                     horizontal: 'auto',
 
                 },
-                wordWrap: (wrap?"on":"off") // Word wraps
+                wordWrap: (wrap ? "on" : "off") // Word wraps
             });
-            window.onresize = function (){
+            window.onresize = function () {
                 editor.layout();
             };
 
@@ -95,16 +100,16 @@
                 // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
                 keybindingContext: null,
 
-			contextMenuGroupId: 'cutcopypaste',
+                contextMenuGroupId: 'cutcopypaste',
 
-			contextMenuOrder: 100,
+                contextMenuOrder: 100,
 
                 // Method that will be executed when the action is triggered.
                 // @param editor The editor instance is passed in as a convenience
                 run: function (ed) {
-                    if(wrap){
+                    if (wrap) {
                         editor.updateOptions({ wordWrap: "off" })
-                    }else{
+                    } else {
                         editor.updateOptions({ wordWrap: "on" })
                     }
                     wrap = !wrap;
@@ -114,7 +119,7 @@
             onContextMenu();
         });
 
-        function onContextMenu(){
+        function onContextMenu() {
             // Hide context menu items
             // Code modified from https://stackoverflow.com/questions/48745208/disable-cut-and-copy-in-context-menu-in-monaco-editor/65413517#65413517
             let menus = require('vs/platform/actions/common/actions').MenuRegistry._menuItems

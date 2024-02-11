@@ -146,7 +146,12 @@ namespace Peek.FilePreviewer.Controls
 
                 PreviewBrowser.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled = false;
                 PreviewBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+#if DEBUG
+                PreviewBrowser.CoreWebView2.Settings.AreDevToolsEnabled = true;
+                PreviewBrowser.CoreWebView2.OpenDevToolsWindow();
+#else
                 PreviewBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false;
+#endif
                 PreviewBrowser.CoreWebView2.Settings.AreHostObjectsAllowed = false;
                 PreviewBrowser.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
                 PreviewBrowser.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;

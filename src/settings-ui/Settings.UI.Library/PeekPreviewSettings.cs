@@ -16,10 +16,13 @@ namespace Settings.UI.Library
 
         public BoolProperty SourceCodeTryFormat { get; set; }
 
+        public IntProperty SourceCodeZoomLevel { get; set; }
+
         public PeekPreviewSettings()
         {
             SourceCodeWrapText = new BoolProperty(false);
             SourceCodeTryFormat = new BoolProperty(false);
+            SourceCodeZoomLevel = new IntProperty(100);
         }
 
         public string ToJsonString()

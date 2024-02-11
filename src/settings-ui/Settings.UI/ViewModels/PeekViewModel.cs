@@ -173,6 +173,20 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             }
         }
 
+        public int SourceCodeZoomLevel
+        {
+            get => _peekPreviewSettings.SourceCodeZoomLevel.Value;
+            set
+            {
+                if (_peekPreviewSettings.SourceCodeZoomLevel.Value != value)
+                {
+                    _peekPreviewSettings.SourceCodeZoomLevel.Value = value;
+                    OnPropertyChanged(nameof(SourceCodeZoomLevel));
+                    SavePreviewSettings();
+                }
+            }
+        }
+
         private void NotifySettingsChanged()
         {
             // Using InvariantCulture as this is an IPC message
